@@ -1,0 +1,32 @@
+[
+    {
+        "id": 1,
+        "title": "Cervezas",
+        "description": "Una amplia variedad de cervezas artesanales y comerciales.",
+        "icon_link": "https://media.tada.com.ar/category/icon_categ-01.png?w=48"
+    },
+    {
+        "id": 2,
+        "title": "Destilados",
+        "description": "Licores destilados como whisky, ron, vodka y más.",
+        "icon_link": "https://media.tada.com.ar/category/icon_categ-04.png?w=48"
+    },
+    {
+        "id": 3,
+        "title": "Sin Alcohol",
+        "description": "Bebidas refrescantes y saludables sin contenido alcohólico.",
+        "icon_link": "https://media.tada.com.ar/category/icon_categ-03.png?w=48"
+    },
+    {
+        "id": 4,
+        "title": "Snacks",
+        "description": "Snacks y acompañamientos ideales para disfrutar con tus bebidas.",
+        "icon_link": "https://media.tada.com.ar/category/icon_categ-05.png?w=48"
+    },
+    {
+        "id": 5,
+        "title": "Vino",
+        "description": "Selección de vinos tintos, blancos y espumantes.",
+        "icon_link": "https://media.tada.com.ar/category/icon_categ-02.png?w=48"
+    }
+]

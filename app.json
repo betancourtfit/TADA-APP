@@ -3,6 +3,7 @@
     "name": "tada-app",
     "slug": "tada-app",
     "version": "1.0.0",
+    "entryPoint": "./App.jsx",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
