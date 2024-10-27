@@ -1,17 +1,24 @@
 import React from "react";
 import { View, Text, Image, StyleSheet, TouchableOpacity } from "react-native";
+import { setProduct } from "../features/shop/shopSlice";
+import { useDispatch } from "react-redux";
+import { addToCart } from "../features/cart/cartSlice";
 
 // Componente para la tarjeta individual
 const Card = ({ item, navigation }) => {
     if (!item) {
         return null; // Si item es undefined, no renderizamos nada
     }
+    const dispatch = useDispatch();
     return (
         <View style={styles.cardContainer}>
             {/* Encabezado */}
             <TouchableOpacity 
                 key={item.id} 
-                onPress={()=> navigation.navigate("ProductDetail", {productId: item.id, products: item})} 
+                onPress={()=> {
+                    dispatch(setProduct(item.id));
+                    navigation.navigate("ProductDetail")
+                }} 
                 >
                     <Text style={styles.headerText}>Ver más</Text>
                 <View style={styles.header}>
@@ -30,7 +37,12 @@ const Card = ({ item, navigation }) => {
             </TouchableOpacity>
 
             {/* Botón */}
-            <TouchableOpacity style={styles.addButton}>
+            <TouchableOpacity 
+                onPress={() => {
+                    dispatch(addToCart({...item, quantity:1}))
+                    }}
+                style={styles.addButton}
+            >
                 <Text style={styles.addButtonText}>AGREGAR</Text>
             </TouchableOpacity>
         </View>

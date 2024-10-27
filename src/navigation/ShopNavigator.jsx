@@ -13,8 +13,8 @@ const ShopNavigator = () => {
         }}
         >
             <Stack.Screen name="Home" component={Home} />
-            <Stack.Screen name="CategoriesScreen" component={CategoriesScreen} options={({ route }) => ({ title: route.params.categoryName })} />
-            <Stack.Screen name="ProductDetail" component={ProductDetail} options={({route})=> ({ title: route.params.title })} />
+            <Stack.Screen name="CategoriesScreen" component={CategoriesScreen}  />
+            <Stack.Screen name="ProductDetail" component={ProductDetail} />
         </Stack.Navigator>
     );
 }

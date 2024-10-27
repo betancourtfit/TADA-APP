@@ -1,4 +1,5 @@
 import { createSlice } from "@reduxjs/toolkit";
+import { calculate_total_price } from "../../utils/functions";
 
 export const cartSlice = createSlice({
     name: "cart",
@@ -12,10 +13,34 @@ export const cartSlice = createSlice({
     },
     reducers: {
         addToCart: (state, action) => {
-            state.cart = [...state.cart, action.payload];
+            console.log('Añadiendo al carrito:', action.payload);
+            const productExist = state.value.cartItems.find((item) => item.id === action.payload.id);
+            if (productExist) {
+                productExist.quantity += 1;
+            } else {
+                state.value.cartItems.push(action.payload);
+            }
+            // Calcular el precio total
+            state.value.total = calculate_total_price(state.value.cartItems);
+            state.value.updatedAt = new Date().toLocaleString();
+            console.log("Estado actualizado del carrito:", state.value.cartItems);
+            console.log(state.value.cartItems);
         },
         removeFromCart: (state, action) => {
-            state.cart = state.cart.filter((item) => item.id !== action.payload.id);
+            state.value.cartItems = state.value.cartItems.filter((item) => item.id !== action.payload.id);
+            // Calcular el precio total
+            state.value.total = calculate_total_price(state.value.cartItems);
+            state.value.updatedAt = new Date().toLocaleString();
+
         },
-    },
+        cleanCart: (state) => {
+            state.value.cartItems = [];
+            state.value.total = 0;
+            state.value.updatedAt = new Date().toLocaleString();
+        },
+    }
 });
+
+export const { addToCart, removeFromCart, cleanCart } = cartSlice.actions;
+
+export default cartSlice.reducer;

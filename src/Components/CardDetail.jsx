@@ -1,10 +1,13 @@
 import React from 'react';
 import { View, Text, Image, StyleSheet, TouchableOpacity } from 'react-native';
+import { addToCart } from '../features/cart/cartSlice';
+import { useDispatch } from 'react-redux';
 
-const CardDetail = ({ productId, product }) => {
-    //const product = products.find((p) => p.id === productId);
-
-    if (!product) {
+const CardDetail = ({ product }) => {
+    const dispatch = useDispatch();
+    // Acceder al producto dentro de la clave "0" si existe
+    const actualProduct = Object.values(product)[0];
+    if (!actualProduct) {
         return (
             <View style={styles.notFound}>
                 <Text>Product not found</Text>
@@ -13,16 +16,21 @@ const CardDetail = ({ productId, product }) => {
     }
     return (
         <View style={styles.cardDetail}>
-            <Text style={styles.title}>{product.title}</Text>
-            <Text style={styles.description}>{product.subtitle}</Text>
-            <Text style={styles.price}>Price: ${product.price}</Text>
-            <Text style={styles.category}>Category: {product.categoryId}</Text>
+            <Text style={styles.title}>{actualProduct.title}</Text>
+            <Text style={styles.description}>{actualProduct.subtitle}</Text>
+            <Text style={styles.price}>Price: ${actualProduct.price}</Text>
+            <Text style={styles.category}>Category: {actualProduct.categoryId}</Text>
             <Image
-                source={{ uri: product.image }}
+                source={{ uri: actualProduct.image }}
                 style={styles.image}
             />
             {/* Botón */}
-            <TouchableOpacity style={styles.addButton}>
+            <TouchableOpacity 
+            style={styles.addButton}
+            onPress={() => {     
+                dispatch(addToCart({...actualProduct, quantity:1}))
+                }}
+            >
                 <Text style={styles.addButtonText}>AGREGAR</Text>
             </TouchableOpacity>
         </View>

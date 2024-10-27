@@ -11,36 +11,31 @@ import {
 import CustomCarousel from "../Components/Carousel";
 import { color } from "../Global/color";
 import Categories from "../Components/Categories";
-//import products from "../Data/products.json";
 import CardCarousel from "../Components/CardCarousel";
 import Card from "../Components/Card";
-import { useSelector, useDispatch } from "react-redux";
-import { setCategory } from "../features/shop/shopSlice";
-import { useGetProductsQuery } from "../services/shopService";
+import { useGetProductsQuery, useGetCategoriesQuery } from "../services/shopService";
 
 
 
 
 const Home = ({ navigation }) => {
-    const categories = useSelector((state) => state.shop.value.categories);
-    const { data: products, error, isLoading } = useGetProductsQuery();
-    console.log(products);
-    const dispatch = useDispatch();
+    const { data: categories, error: errorCategories, isLoading: isLoadingCategories } = useGetCategoriesQuery();
+    const { data: products, error: errorProducts, isLoading: isLoadingProducts } = useGetProductsQuery();
 
-    if (isLoading) {
+    if (isLoadingProducts || isLoadingCategories) {
         // Mostrar un indicador de carga si los datos aún están siendo cargados
         return (
             <View style={styles.loadingContainer}>
-                <Text>Cargando productos...</Text>
+                <Text>Cargando ...</Text>
             </View>
         );
     }
 
-    if (error) {
+    if (errorProducts || errorCategories) {
         // Mostrar un mensaje de error si ocurre un error durante la carga
         return (
             <View style={styles.errorContainer}>
-                <Text>Error al cargar los productos</Text>
+                <Text>Error al cargar</Text>
             </View>
         );
     }

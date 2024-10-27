@@ -7,22 +7,24 @@ import {
     Image,
     Dimensions,
 } from "react-native";
-//import categories from "../Data/categories.json";
+import { setCategory } from "../features/shop/shopSlice";
+import { useDispatch } from "react-redux";
 
 // Obtener el ancho de la pantalla para ajustar el tamaño de los botones
 const { width: screenWidth } = Dimensions.get("window");
 
 const Categories = ({categories, navigation}) => {
+    const dispatch = useDispatch();
     return (
         <View style={styles.categoriesContainer}>
             {categories.map((category) => (
                 <TouchableOpacity
                     key={category.id}
                     style={styles.categoryButton}
-                    onPress={() => navigation.navigate("CategoriesScreen", { 
-                        categoryId: category.id,
-                        categoryName: category.title,
-                        })}
+                    onPress={() => {
+                        // Cambiar la categoría seleccionada en el estado
+                        dispatch(setCategory(category.id));
+                        navigation.navigate("CategoriesScreen")}}
                 >
                     {/* Mostrar la imagen desde icon_link */}
                     <Image

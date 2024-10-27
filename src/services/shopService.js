@@ -1,5 +1,6 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 import { base_url } from '../firebase/database';
+import { get } from 'react-native/Libraries/TurboModule/TurboModuleRegistry';
 
 export const shopApi = createApi({
     reducerPath: 'shopApi',
@@ -24,11 +25,15 @@ export const shopApi = createApi({
                 return getValues(response);
             }
         }),
+        getProductById: builder.query({
+            query: (id) => `products.json?orderBy="id"&equalTo=${id}`,
+        }),
     })
 });
 
 export const {
     useGetProductsQuery,
     useGetCategoriesQuery,
-    useGetProductsByCategoryQuery 
+    useGetProductsByCategoryQuery,
+    useGetProductByIdQuery, 
 } = shopApi;

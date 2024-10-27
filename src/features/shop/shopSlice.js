@@ -8,17 +8,21 @@ const shopSlice = createSlice({
         value: {
         categories: categories,
         products: products,
-        categorySelected:""
+        categorySelected:null,
+        productSelected: null
         }
     },
     reducers: {
         setCategory: (state, action) => {
             state.value.categorySelected = action.payload;
+        },
+        setProduct: (state, action) => {
+            state.value.productSelected = action.payload;
         }
     },
 
 });
 
-export const { setCategory } = shopSlice.actions;
+export const { setCategory, setProduct } = shopSlice.actions;
 
 export default shopSlice.reducer;
