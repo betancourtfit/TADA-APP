@@ -1,15 +1,16 @@
 import { StatusBar, Platform, ScrollView } from 'react-native';
 import { StyleSheet, View, Button, Text } from 'react-native';
 import Header from './src/Components/Header';
-import Navigator from './src/navigation/Navigator';
+import TabNavigator from './src/navigation/TabNavigator';
+import store  from './src/app/store';
+import { Provider } from 'react-redux';
 
 export default function App() {
   return (
-    <>
+    <Provider store={store} >
       <StatusBar backgroundColor="#000000" barStyle="light-content" />
-      <Header />
-      <Navigator />
-    </>
+      <TabNavigator />
+    </Provider>
   );
 }
 

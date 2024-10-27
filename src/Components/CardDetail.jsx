@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, Image, StyleSheet } from 'react-native';
+import { View, Text, Image, StyleSheet, TouchableOpacity } from 'react-native';
 
 const CardDetail = ({ productId, product }) => {
     //const product = products.find((p) => p.id === productId);
@@ -21,6 +21,10 @@ const CardDetail = ({ productId, product }) => {
                 source={{ uri: product.image }}
                 style={styles.image}
             />
+            {/* Botón */}
+            <TouchableOpacity style={styles.addButton}>
+                <Text style={styles.addButtonText}>AGREGAR</Text>
+            </TouchableOpacity>
         </View>
     );
 };
@@ -56,6 +60,16 @@ const styles = StyleSheet.create({
         width: "100%",
         height: 200,
         resizeMode: "contain",
+    },
+    addButton: {
+        backgroundColor: "#F4C10F", // Color del botón
+        paddingVertical: 10,
+        alignItems: "center",
+        borderBottomLeftRadius: 10,
+    },
+    addButtonText: {
+        color: "#3B0153", // Color del texto del botón
+        fontWeight: "bold",
     },
 });
 
