@@ -4,7 +4,7 @@ import { NavigationContainer } from '@react-navigation/native';
 import ShopNavigator from './ShopNavigator';
 import CartNavigator from './CartNavigator';
 import OrderNavigator from './OrderNavigator';
-import Profile from '../Screens/sidebar/Profile';
+import Profile from '../Screens/Profile';
 import MyPlacesNavigator from './MyPlacesNavigator';
 
 const Tab = createBottomTabNavigator();

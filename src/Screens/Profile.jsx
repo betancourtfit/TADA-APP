@@ -1,11 +1,11 @@
 import React, { useEffect } from 'react';
 import { Text, View, Button, StyleSheet, TouchableOpacity, Pressable, Image } from 'react-native';
 import { useSelector, useDispatch } from 'react-redux';
-import { setLogout, setImage } from '../../features/auth/authSlice';
-import { color } from '../../Global/color';
-import CameraIcon from '../../Components/CameraIcon';
+import { setLogout, setImage } from '../features/auth/authSlice';
+import { color } from '../Global/color';
+import CameraIcon from '../Components/CameraIcon';
 import * as ImagePicker from 'expo-image-picker';
-import { usePutProfilePictureMutation, useLazyGetProfilePictureQuery } from '../../services/userService';
+import { usePutProfilePictureMutation, useLazyGetProfilePictureQuery } from '../services/userService';
 
 const Profile = () => {
     const user = useSelector(state => state.auth.user);
