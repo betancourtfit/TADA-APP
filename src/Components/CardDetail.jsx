@@ -7,6 +7,7 @@ const CardDetail = ({ product }) => {
     const dispatch = useDispatch();
     // Acceder al producto dentro de la clave "0" si existe
     const actualProduct = Object.values(product)[0];
+    //const actualProduct = product;
     if (!actualProduct) {
         return (
             <View style={styles.notFound}>

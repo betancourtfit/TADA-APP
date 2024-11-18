@@ -6,14 +6,13 @@ export const cartSlice = createSlice({
     initialState: {
         value: {
             cartItems: [],
-            user: null,
+            user: "demo",
             total: 0,
             updatedAt: Date.now().toLocaleString()
         }
     },
     reducers: {
         addToCart: (state, action) => {
-            console.log('Añadiendo al carrito:', action.payload);
             const productExist = state.value.cartItems.find((item) => item.id === action.payload.id);
             if (productExist) {
                 productExist.quantity += 1;
@@ -23,8 +22,6 @@ export const cartSlice = createSlice({
             // Calcular el precio total
             state.value.total = calculate_total_price(state.value.cartItems);
             state.value.updatedAt = new Date().toLocaleString();
-            console.log("Estado actualizado del carrito:", state.value.cartItems);
-            console.log(state.value.cartItems);
         },
         removeFromCart: (state, action) => {
             state.value.cartItems = state.value.cartItems.filter((item) => item.id !== action.payload.id);

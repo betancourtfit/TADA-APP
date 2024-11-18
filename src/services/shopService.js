@@ -1,16 +1,22 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
-import { base_url } from '../firebase/database';
-import { get } from 'react-native/Libraries/TurboModule/TurboModuleRegistry';
 
 export const shopApi = createApi({
     reducerPath: 'shopApi',
-    baseQuery: fetchBaseQuery({ baseUrl: base_url }),
+    baseQuery: fetchBaseQuery({ baseUrl: process.env.BASE_URL }),
     endpoints: (builder) => ({
         getProducts: builder.query({
             query: () => 'products.json',
         }),
         getCategories: builder.query({
             query: () => 'categories.json',
+            transformResponse: (response) => {
+                if (!response) {
+                    return [];
+                }
+
+                const getValues = (obj) => Object.keys(obj).map(key => obj[key]);
+                return getValues(response);
+            }
         }),
         getProductsByCategory: builder.query({
             query: (category) => `products.json?orderBy="categoryId"&equalTo=${category}`,
@@ -27,6 +33,15 @@ export const shopApi = createApi({
         }),
         getProductById: builder.query({
             query: (id) => `products.json?orderBy="id"&equalTo=${id}`,
+            // transformar object a array
+            transformResponse: (response) => {
+                if (!response) {
+                    return [];
+                }
+
+                const getValues = (obj) => Object.keys(obj).map(key => obj[key]);
+                return getValues(response);
+            }
         }),
     })
 });

@@ -7,6 +7,7 @@ import { useCreateOrderMutation } from '../services/orderService';
 const CartScreen = ({ navigation }) => {
     const cart = useSelector((state) => state.cart.value.cartItems);
     const total = useSelector((state) => state.cart.value.total);
+    const user = useSelector((state) => state.cart.value.user);
     const dispatch = useDispatch();
     const [createOrder] = useCreateOrderMutation();
 
@@ -27,6 +28,7 @@ const CartScreen = ({ navigation }) => {
                             const order = {
                                 items: cart,
                                 total: total,
+                                user: user,
                                 date: new Date().toLocaleString(),
                                 status: "Pendiente",
                             };
@@ -38,7 +40,12 @@ const CartScreen = ({ navigation }) => {
                                 // Limpiar el carrito
                                 dispatch(cleanCart());
                                 Alert.alert("Compra realizada con éxito", "Tu orden ha sido creada correctamente.");
-                                // Aquí podrías limpiar el carrito o redirigir al usuario a una pantalla de confirmación
+                                // esperar 2 segundos  y navegar a la screen de Orders
+                                setTimeout(() => {
+                                    navigation.navigate("Order");
+                                }, 2000);
+
+
                             }
                         } catch (error) {
                             console.error("Error al confirmar la compra:", error);

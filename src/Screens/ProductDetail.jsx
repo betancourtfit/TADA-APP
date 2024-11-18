@@ -19,7 +19,6 @@ const ProductDetail = ({navigation}) => {
             <Text>Error al cargar el producto</Text>
         );
     }
-    console.log(product);
     return (
         <>
             {/* Flecha de volver atras */}

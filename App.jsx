@@ -1,15 +1,20 @@
-import { StatusBar, Platform, ScrollView } from 'react-native';
-import { StyleSheet, View, Button, Text } from 'react-native';
-import Header from './src/Components/Header';
-import TabNavigator from './src/navigation/TabNavigator';
-import store  from './src/app/store';
+import { StatusBar, Platform } from 'react-native';
+import { StyleSheet, View } from 'react-native';
 import { Provider } from 'react-redux';
+import store from './src/app/store';
+import MainNavigator from './src/navigation/MainNavigator';
+import { createSessionsTable } from './src/db';
+
+createSessionsTable()
+  .then(() => console.log('Sessions table created'))
+  .catch(err => console.log('Error creating sessions table', err))
+
 
 export default function App() {
   return (
     <Provider store={store} >
       <StatusBar backgroundColor="#000000" barStyle="light-content" />
-      <TabNavigator />
+      <MainNavigator />
     </Provider>
   );
 }
@@ -20,3 +25,5 @@ const styles = StyleSheet.create({
     paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight : 15, // Agregar espacio para Android
   },
 });
+
+

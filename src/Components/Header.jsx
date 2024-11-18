@@ -1,6 +1,6 @@
 import React from 'react';
 import { View, Text, TextInput, StyleSheet } from 'react-native';
-import { FontAwesome, MaterialIcons } from '@expo/vector-icons'; // Asegúrate de importar los iconos que usarás
+import { FontAwesome, MaterialIcons } from '@expo/vector-icons';
 import { color } from '../Global/color';
 
 const Header = () => {
