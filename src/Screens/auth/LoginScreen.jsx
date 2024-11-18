@@ -3,10 +3,12 @@ import { View, Text, TextInput, Button, TouchableOpacity, Linking, StyleSheet, A
 import { useNavigation } from '@react-navigation/native';
 import { useDispatch } from 'react-redux';
 import { color } from '../../Global/color.js';
-import { setLogin, setImage } from '../../features/auth/authSlice';
+import { setLogin } from '../../features/auth/authSlice';
 import { useLoginMutation, useSignupAnonymousMutation } from '../../services/authService';
 import { useLazyGetProfilePictureQuery } from '../../services/userService.js';
-import { insertSession } from '../../db/index.js';
+import { insertSession, clearSessions } from '../../db/index.js';
+import { isValidEmail } from '../../utils/functions.js';
+import Toast from 'react-native-toast-message';
 
 const LoginScreen = () => {
   const navigation = useNavigation();
@@ -15,6 +17,7 @@ const LoginScreen = () => {
   const [password, setPassword] = useState('Dev123!');
   const [localId, setLocalId] = useState(null);
   const [rememberMe, setRememberMe] = useState(false);
+  const [showAnonymousLogin, setShowAnonymousLogin] = useState(false);
 
   const [login, { isLoading, isError, error, data }] = useLoginMutation();
   const [triggerGetProfilePicture, { data: dataProfile, isLoading: isLoadingProfile, isError: isErrorProfile, error: errorProfile }] =
@@ -26,12 +29,34 @@ const LoginScreen = () => {
       console.error('El campo de correo electrónico está vacío');
       return;
     }
+    if (!isValidEmail(email)) {
+      console.error('El correo electrónico no es válido');
+      return;
+    }
     try {
       const loginResult = await login({ email, password }).unwrap();
       setLocalId(loginResult.localId);
+
+      if(rememberMe){
+        // Llama a clearSessions antes de insertar la nueva sesión
+        await clearSessions();
+        // Inserta la nueva sesión con los datos obtenidos del login
+        await insertSession(loginResult.localId, loginResult.email, loginResult.idToken);
+      }
       triggerGetProfilePicture(loginResult.localId);
+      Toast.show({
+        type: 'success',
+        text1: 'Registro exitoso',
+        text2: `Bienvenido! 🎉`,
+      });
     } catch (error) {
+      const errorMessage = getErrorMessage(error);
       console.error('Error al iniciar sesión:', error);
+      Toast.show({
+        type: 'error',
+        text1: 'Error al iniciar sesión',
+        text2: errorMessage,
+      });
     }
   };
 
@@ -43,6 +68,17 @@ const LoginScreen = () => {
       if (error?.data?.error?.code === 400 && error?.data?.error?.message === 'ADMIN_ONLY_OPERATION') {
         console.error('La operación de inicio de sesión anónima está restringida a administradores.');
       }
+    }
+  };
+
+  const getErrorMessage = (firebaseError) => {
+    const errorCode = firebaseError?.data?.error?.message || firebaseError?.code;
+  
+    switch (errorCode) {
+      case 'INVALID_LOGIN_CREDENTIALS':
+        return 'El correo electrónico o la contraseña son incorrectos.';
+      default:
+        return 'Ocurrió un error desconocido. Por favor, inténtalo nuevamente.';
     }
   };
 
@@ -100,11 +136,16 @@ const LoginScreen = () => {
       <TouchableOpacity onPress={() => navigation.navigate('Signup')}>
         <Text style={styles.signupText}>Aún no tengo cuenta</Text>
       </TouchableOpacity>
-      {isLoadingAnonymous ? (
-        <ActivityIndicator size="large" color={color.purplePrimary} />
-      ) : (
-        <Button title="Iniciar sesión anónima" color={color.purpleSecondary} onPress={handleAnonymousLogin} />
+
+      {/* Condicional para mostrar u ocultar la opción de iniciar sesión anónima */}
+      {showAnonymousLogin && (
+        isLoadingAnonymous ? (
+          <ActivityIndicator size="large" color={color.purplePrimary} />
+        ) : (
+          <Button title="Iniciar sesión anónima" color={color.purpleSecondary} onPress={handleAnonymousLogin} />
+        )
       )}
+
       {isErrorAnonymous && (
         <Text style={styles.errorText}>
           Error al iniciar sesión anónima: {errorAnonymous?.data?.message || 'Error desconocido'}

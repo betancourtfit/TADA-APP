@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Text, View, Button, StyleSheet, TouchableOpacity, Pressable, Image } from 'react-native';
 import { useSelector, useDispatch } from 'react-redux';
 import { setLogout, setImage } from '../features/auth/authSlice';
@@ -6,11 +6,13 @@ import { color } from '../Global/color';
 import CameraIcon from '../Components/CameraIcon';
 import * as ImagePicker from 'expo-image-picker';
 import { usePutProfilePictureMutation, useLazyGetProfilePictureQuery } from '../services/userService';
+import { clearSessions } from '../db';
 
 const Profile = () => {
     const user = useSelector(state => state.auth.user);
     const image = useSelector(state => state.auth.image);
     const localId = useSelector(state => state.auth.localId);
+    const [isLoggingOut, setIsLoggingOut] = useState(false);
     const dispatch = useDispatch();
     const [putProfilePicture, res] = usePutProfilePictureMutation();
     const [getProfilePicture, { data: dataProfile, isLoading: isLoadingProfile, isError: isErrorProfile }] = useLazyGetProfilePictureQuery();
@@ -27,8 +29,29 @@ const Profile = () => {
         }
     }, [dataProfile]);
 
-    const handleLogout = () => {
-        dispatch(setLogout());
+    const handleLogout = async () => {
+        setIsLoggingOut(true);
+        try {
+            await clearSessions();
+            dispatch(setLogout());
+        } catch (error) {
+            console.error('Error al cerrar sesión:', error);
+            alert('Error al cerrar sesión.');
+        } finally {
+            setIsLoggingOut(false);
+        }
+    };
+
+    const confirmLogout = () => {
+        Alert.alert(
+            'Cerrar sesión',
+            '¿Estás seguro de que deseas cerrar sesión?',
+            [
+                { text: 'Cancelar', style: 'cancel' },
+                { text: 'Cerrar sesión', onPress: handleLogout },
+            ],
+            { cancelable: true }
+        );
     };
 
     const verifyCameraPermissions = async () => {
@@ -78,7 +101,7 @@ const Profile = () => {
             </View>
             <Text style={styles.profileData}>Email: {user}</Text>
         </View>
-        <Button title="Cerrar sesión" onPress={handleLogout} />
+        <Button title="Cerrar sesión" onPress={handleLogout} disabled={isLoggingOut} />
         </>
     );
     };

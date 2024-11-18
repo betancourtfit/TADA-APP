@@ -6,6 +6,9 @@ import { useSignupMutation } from '../../services/authService';
 import { useDispatch } from 'react-redux';
 import { setLogin } from '../../features/auth/authSlice.js';
 import { useNavigation } from '@react-navigation/native';
+import { isValidEmail } from '../../utils/functions.js';
+import { clearSessions, insertSession } from '../../db/index.js';
+import Toast from 'react-native-toast-message';
 
 const textInputWidth = Dimensions.get('screen').width*0.7
 
@@ -17,23 +20,54 @@ const SignupScreen = () => {
   const [phone, setPhone] = useState('+54911000000')
   const [password, setPassword] = useState('Dev123!')
   const [confirmPassword, setConfirmPassword] = useState('Dev123!')
+  const [isEmailValid, setIsEmailValid] = useState(true);
+
   const dispatch = useDispatch();
   const navigation = useNavigation();
 
   const [signup, result] = useSignupMutation();
 
+
   const handleSignup = async () => {
+    // Validación de contraseñas
     if (password !== confirmPassword) {
       alert("Las contraseñas no coinciden");
       return;
     }
+
+    // Validación de email
+    if (!isValidEmail(email)) {
+      setIsEmailValid(false);
+      alert("Ingrese un email válido");
+      return;
+    }
+
     try {
-      await signup({ email, password, name, lastName, idNumber, phone }).unwrap();
-      alert("Registro exitoso");
+      // Intentar registro
+      const response = await signup({ email, password, name, lastName, idNumber, phone }).unwrap();
+
+      // Si el registro es exitoso, limpiar sesiones e insertar la nueva
+      await clearSessions();
+      await insertSession(response.localId, email, response.idToken);
+
+          // Mostrar Toast de bienvenida
+      Toast.show({
+        type: 'success',
+        text1: 'Registro exitoso',
+        text2: `Bienvenido, ${name}! 🎉`,
+      });
+      dispatch(setLogin(response));
     } catch (err) {
+      console.error("Error en el registro:", err);
       alert("Error en el registro");
     }
   };
+
+  useEffect(() => {
+    if (email) {
+      setIsEmailValid(isValidEmail(email)); // Actualiza el estado de si el email es válido
+    }
+  }, [email]);
 
   useEffect(() => {
     if (result.status === 'fulfilled') {

@@ -4,6 +4,7 @@ import { Provider } from 'react-redux';
 import store from './src/app/store';
 import MainNavigator from './src/navigation/MainNavigator';
 import { createSessionsTable } from './src/db';
+import Toast from 'react-native-toast-message';
 
 createSessionsTable()
   .then(() => console.log('Sessions table created'))
@@ -15,6 +16,7 @@ export default function App() {
     <Provider store={store} >
       <StatusBar backgroundColor="#000000" barStyle="light-content" />
       <MainNavigator />
+      <Toast />
     </Provider>
   );
 }
