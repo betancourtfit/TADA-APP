@@ -47,7 +47,6 @@ TADA es una aplicación móvil de e-commerce desarrollada con React Native como 
 - Carga de estados
 - Validaciones de formularios
 
-## Instalación
 
 ## Estructura del Proyecto
 - `/src`: Contiene todo el código fuente de la aplicación

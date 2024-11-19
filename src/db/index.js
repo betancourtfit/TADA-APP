@@ -43,20 +43,20 @@ export const insertSession = (localId, email, token) => {
     return promise
 }
 
-export const fetchSession = (localId) => {
-    console.log(`fetchSession: Iniciando búsqueda de sesión localId=${localId}`);
+export const fetchSession = () => {
+    console.log(`fetchSession: Iniciando búsqueda de sesión `);
     const promise = new Promise((resolve, reject) => {
         db.transaction(tx => {
         tx.executeSql(
-            'SELECT * FROM sessions WHERE localId = ?;',
-            [localId],
+            'SELECT * FROM sessions;',
+            [],
             (_, result) => {
                 if (result.rows.length > 0) {
                     const session = result.rows.item(0);
-                    console.log(`fetchSession: Sesión encontrada: localId=${localId}`);
+                    console.log(`fetchSession: Sesión encontrada`);
                     resolve(session);
                 } else {
-                    console.log(`fetchSession: No se encontró sesión para localId=${localId}`);
+                    console.log(`fetchSession: No se encontró sesión `);
                     resolve(null);
                 }
             },

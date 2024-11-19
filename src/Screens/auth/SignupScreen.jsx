@@ -27,6 +27,24 @@ const SignupScreen = () => {
 
   const [signup, result] = useSignupMutation();
 
+  const getErrorMessage = (firebaseError) => {
+    const errorCode = firebaseError?.data?.error?.message;
+
+    switch (errorCode) {
+      case 'EMAIL_EXISTS':
+        return 'El correo electrónico ya está registrado.';
+      case 'OPERATION_NOT_ALLOWED':
+        return 'Esta operación no está permitida. Contacta con soporte.';
+      case 'TOO_MANY_ATTEMPTS_TRY_LATER':
+        return 'Demasiados intentos fallidos. Intenta más tarde.';
+      case 'INVALID_EMAIL':
+        return 'El correo electrónico no es válido.';
+      case 'WEAK_PASSWORD':
+        return 'La contraseña debe tener al menos 6 caracteres.';
+      default:
+        return 'Ocurrió un error inesperado. Por favor, inténtalo de nuevo.';
+    }
+  };
 
   const handleSignup = async () => {
     // Validación de contraseñas
@@ -45,7 +63,7 @@ const SignupScreen = () => {
     try {
       // Intentar registro
       const response = await signup({ email, password, name, lastName, idNumber, phone }).unwrap();
-
+      console.log(response);
       // Si el registro es exitoso, limpiar sesiones e insertar la nueva
       await clearSessions();
       await insertSession(response.localId, email, response.idToken);
@@ -58,8 +76,15 @@ const SignupScreen = () => {
       });
       dispatch(setLogin(response));
     } catch (err) {
-      console.error("Error en el registro:", err);
-      alert("Error en el registro");
+      // Obtener mensaje de error
+      const errorMessage = getErrorMessage(err);
+
+      // Mostrar Toast con el mensaje de error
+      Toast.show({
+        type: 'error',
+        text1: 'Error en el registro',
+        text2: errorMessage,
+      });
     }
   };
 

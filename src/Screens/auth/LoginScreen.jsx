@@ -6,7 +6,7 @@ import { color } from '../../Global/color.js';
 import { setLogin } from '../../features/auth/authSlice';
 import { useLoginMutation, useSignupAnonymousMutation } from '../../services/authService';
 import { useLazyGetProfilePictureQuery } from '../../services/userService.js';
-import { insertSession, clearSessions } from '../../db/index.js';
+import { insertSession, clearSessions, fetchSession } from '../../db/index.js';
 import { isValidEmail } from '../../utils/functions.js';
 import Toast from 'react-native-toast-message';
 
@@ -23,6 +23,35 @@ const LoginScreen = () => {
   const [triggerGetProfilePicture, { data: dataProfile, isLoading: isLoadingProfile, isError: isErrorProfile, error: errorProfile }] =
     useLazyGetProfilePictureQuery();
   const [signupAnonymous, { isLoading: isLoadingAnonymous, isError: isErrorAnonymous, error: errorAnonymous, data: dataAnonymous }] = useSignupAnonymousMutation();
+
+   // Validar sesión existente al iniciar el componente
+   useEffect(() => {
+    const checkSession = async () => {
+      try {
+        const session = await fetchSession();
+        if (session) {
+          // Si hay una sesión, habilítala automáticamente
+          const { localId, email, idToken } = session;
+          setLocalId(localId);
+          dispatch(setLogin({ localId, email, idToken }));
+
+          // Obtener imagen de perfil
+          triggerGetProfilePicture(localId);
+
+          Toast.show({
+            type: 'success',
+            text1: 'Sesión restaurada',
+            text2: `Bienvenido de nuevo, ${email}! 🎉`,
+          });
+
+        }
+      } catch (err) {
+        console.error('Error al recuperar la sesión:', err);
+      }
+    };
+
+    checkSession();
+  }, []);
 
   const handleLogin = async () => {
     if (!email) {
