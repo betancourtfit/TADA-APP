@@ -1,6 +1,6 @@
 import React from 'react';
 import { View, Text, TextInput, Button, Dimensions, StyleSheet } from 'react-native';
-import { color } from '../../Global/color.js'
+import { color } from '../../Global/color.js';
 import { useState, useEffect } from 'react';
 import { useSignupMutation } from '../../services/authService';
 import { useDispatch } from 'react-redux';
@@ -10,22 +10,29 @@ import { isValidEmail } from '../../utils/functions.js';
 import { clearSessions, insertSession } from '../../db/index.js';
 import Toast from 'react-native-toast-message';
 
-const textInputWidth = Dimensions.get('screen').width*0.7
+const textInputWidth = Dimensions.get('screen').width * 0.7;
 
 const SignupScreen = () => {
-  const [email, setMail] =  useState('prueba@juan.com')
-  const [name, setName] = useState('Jhon')
-  const [lastName, setLastName] = useState('Doe')
-  const [idNumber, setIdNumber] = useState('10000')
-  const [phone, setPhone] = useState('+54911000000')
-  const [password, setPassword] = useState('Dev123!')
-  const [confirmPassword, setConfirmPassword] = useState('Dev123!')
+  const [formData, setFormData] = useState({
+    email: '',
+    name: '',
+    lastName: '',
+    idNumber: '',
+    phone: '',
+    password: '',
+    confirmPassword: '',
+  });
+
   const [isEmailValid, setIsEmailValid] = useState(true);
 
   const dispatch = useDispatch();
   const navigation = useNavigation();
 
-  const [signup, result] = useSignupMutation();
+  const [signup] = useSignupMutation();
+
+  const handleChange = (field, value) => {
+    setFormData({ ...formData, [field]: value });
+  };
 
   const getErrorMessage = (firebaseError) => {
     const errorCode = firebaseError?.data?.error?.message;
@@ -47,39 +54,35 @@ const SignupScreen = () => {
   };
 
   const handleSignup = async () => {
-    // Validación de contraseñas
+    const { email, password, confirmPassword, name, lastName, idNumber, phone } = formData;
+
     if (password !== confirmPassword) {
-      alert("Las contraseñas no coinciden");
+      alert('Las contraseñas no coinciden');
       return;
     }
 
-    // Validación de email
     if (!isValidEmail(email)) {
       setIsEmailValid(false);
-      alert("Ingrese un email válido");
+      alert('Ingrese un email válido');
       return;
     }
 
     try {
-      // Intentar registro
       const response = await signup({ email, password, name, lastName, idNumber, phone }).unwrap();
-      console.log(response);
-      // Si el registro es exitoso, limpiar sesiones e insertar la nueva
+
       await clearSessions();
       await insertSession(response.localId, email, response.idToken);
 
-          // Mostrar Toast de bienvenida
       Toast.show({
         type: 'success',
         text1: 'Registro exitoso',
         text2: `Bienvenido, ${name}! 🎉`,
       });
+
       dispatch(setLogin(response));
     } catch (err) {
-      // Obtener mensaje de error
       const errorMessage = getErrorMessage(err);
 
-      // Mostrar Toast con el mensaje de error
       Toast.show({
         type: 'error',
         text1: 'Error en el registro',
@@ -89,83 +92,38 @@ const SignupScreen = () => {
   };
 
   useEffect(() => {
-    if (email) {
-      setIsEmailValid(isValidEmail(email)); // Actualiza el estado de si el email es válido
+    if (formData.email) {
+      setIsEmailValid(isValidEmail(formData.email));
     }
-  }, [email]);
+  }, [formData.email]);
 
-  useEffect(() => {
-    if (result.status === 'fulfilled') {
-      dispatch(setLogin(result.data));
-
-    } if (result.status === 'rejected') {
-      console.log(result);
-    }
-  })
+  const placeholders = {
+    email: 'prueba@juan.com',
+    name: 'Jhon',
+    lastName: 'Doe',
+    idNumber: '10000',
+    phone: '+54911000000',
+    password: 'Dev123!',
+    confirmPassword: 'Dev123!',
+  };
 
   return (
     <View style={styles.container}>
-      <Text style={styles.label}>Email</Text>
-      <TextInput
-        onChangeText={(text) => setMail(text)}
-        style={styles.input}
-        placeholder="Ingrese su email"
-        placeholderTextColor={color.grisClaro}
-        keyboardType="email-address"
-        value={email}
-      />
-      <Text style={styles.label}>Nombre</Text>
-      <TextInput
-        onChangeText={(text) => setName(text)}
-        style={styles.input}
-        placeholder="Ingrese su nombre"
-        placeholderTextColor={color.grisClaro}
-        value={name}
-      />
-      <Text style={styles.label}>Apellido</Text>
-      <TextInput
-        onChangeText={(text) =>  setLastName(text)}
-        style={styles.input}
-        placeholder="Ingrese su apellido"
-        placeholderTextColor={color.grisClaro}
-        value={lastName}
-      />
-      <Text style={styles.label}>DNI</Text>
-      <TextInput
-        onChangeText={(text) => setIdNumber(text)}
-        style={styles.input}
-        placeholder="Ingrese su DNI"
-        placeholderTextColor={color.grisClaro}
-        keyboardType="numeric"
-        value={idNumber}
-      />
-      <Text style={styles.label}>Teléfono</Text>
-      <TextInput
-        onChangeText={(text) => setPhone(text)}
-        style={styles.input}
-        placeholder="Ingrese su teléfono"
-        placeholderTextColor={color.grisClaro}
-        keyboardType="phone-pad"
-        value={phone}
-      />
-      <Text style={styles.label}>Contraseña</Text>
-      <TextInput
-        onChangeText={(text) => setPassword(text)}
-        style={styles.input}
-        placeholder="Ingrese su contraseña"
-        placeholderTextColor={color.grisClaro}
-        secureTextEntry
-        value={password}
-      />
-      <Text style={styles.label}>Confirmar Contraseña</Text>
-      <TextInput
-        onChangeText={(text) => setConfirmPassword(text)}
-        style={styles.input}
-        placeholder="Confirme su contraseña"
-        placeholderTextColor={color.grisClaro}
-        secureTextEntry
-        value={confirmPassword}
-      />
+      {Object.keys(formData).map((field) => (
+        <View key={field}>
+          <Text style={styles.label}>{field === 'confirmPassword' ? 'Confirmar Contraseña' : field.charAt(0).toUpperCase() + field.slice(1)}</Text>
+          <TextInput
+            onChangeText={(text) => handleChange(field, text)}
+            style={styles.input}
+            placeholder={placeholders[field]}
+            defaultValue={placeholders[field]} // Ensure the current value is shown
+            placeholderTextColor={color.grisClaro}
+            value={formData[field]} // Ensure the current value is shown
+            secureTextEntry={field.includes('password')}
+            keyboardType={field === 'email' ? 'email-address' : field === 'idNumber' ? 'numeric' : 'default'}
+          />
+        </View>
+      ))}
       <Button title="Registrarse" color={color.purplePrimary} onPress={handleSignup} />
       <Text style={styles.loginText} onPress={() => navigation.navigate('Login')}>
         Ya tengo cuenta
@@ -193,7 +151,7 @@ const styles = StyleSheet.create({
     borderRadius: 12,
     marginBottom: 20,
     width: textInputWidth,
-    backgroundColor: color.grisClaro
+    backgroundColor: color.grisClaro,
   },
   loginText: {
     color: color.purplePrimary,
@@ -201,5 +159,3 @@ const styles = StyleSheet.create({
     textDecorationLine: 'underline',
   },
 });
-
-

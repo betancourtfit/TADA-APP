@@ -3,7 +3,7 @@ import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 
 export const orderApi = createApi({
     reducerPath: 'orderApi',
-    baseQuery: fetchBaseQuery({ baseUrl: process.env.BASE_URL }),
+    baseQuery: fetchBaseQuery({ baseUrl: process.env.EXPO_PUBLIC_BASE_URL }),
     endpoints: (builder) => ({
         createOrder: builder.mutation({
             async queryFn(order, queryApi, extraOptions, baseQuery) {

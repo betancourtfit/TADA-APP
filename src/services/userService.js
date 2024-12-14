@@ -2,7 +2,7 @@ import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 
 export const userApi = createApi({
     reducerPath: "userApi",
-    baseQuery: fetchBaseQuery({ baseUrl: process.env.BASE_URL }),
+    baseQuery: fetchBaseQuery({ baseUrl: process.env.EXPO_PUBLIC_BASE_URL }),
     endpoints: (builder) => ({
         putProfilePicture: builder.mutation({
             query: ({ image, localId }) => {

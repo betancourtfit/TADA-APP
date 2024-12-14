@@ -5,7 +5,7 @@ import { color } from '../Global/color';
 import Toast from 'react-native-toast-message';
 import FlatCard from '../Components/FlatCard';
 import MapView, {Marker} from 'react-native-maps';
-import {PUBLIC_GEOCODING_API_KEY} from '@env'
+import {EXPO_PUBLIC_GEOCODING_API_KEY} from '@env'
 
 import * as Location from 'expo-location';
 
@@ -66,7 +66,7 @@ const MyPlacesScreen = () => {
             let location = await Location.getCurrentPositionAsync({});
             if (location) {
                 const response = await fetch(
-                    `https://maps.googleapis.com/maps/api/geocode/json?latlng=${location.coords.latitude},${location.coords.longitude}&key=${PUBLIC_GEOCODING_API_KEY}`
+                    `https://maps.googleapis.com/maps/api/geocode/json?latlng=${location.coords.latitude},${location.coords.longitude}&key=${EXPO_PUBLIC_GEOCODING_API_KEY}`
                 );
                 const data = await response.json()
                 if (data.status === 'OK') {

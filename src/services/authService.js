@@ -4,12 +4,12 @@ import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 export const authApi = createApi({
 
     reducerPath: "authApi",
-    baseQuery: fetchBaseQuery({ baseUrl: process.env.BASE_AUTH_URL }),
+    baseQuery: fetchBaseQuery({ baseUrl: process.env.EXPO_PUBLIC_BASE_AUTH_URL }),
     endpoints: (builder) => ({
         login: builder.mutation({
             query: (credentials) => {
                 return {
-                    url: `accounts:signInWithPassword?key=${process.env.FIREBASE_API_KEY}`,
+                    url: `accounts:signInWithPassword?key=${process.env.EXPO_PUBLIC_FIREBASE_API_KEY}`,
                     method: "POST",
                     body: {
                         email: credentials.email,
@@ -22,7 +22,7 @@ export const authApi = createApi({
         signup: builder.mutation({
             query: (credentials) => {
                 return {
-                    url: `accounts:signUp?key=${process.env.FIREBASE_API_KEY}`,
+                    url: `accounts:signUp?key=${process.env.EXPO_PUBLIC_FIREBASE_API_KEY}`,
                     method: "POST",
                     body: {
                         email: credentials.email,
@@ -39,7 +39,7 @@ export const authApi = createApi({
         signupAnonymous: builder.mutation({
             query: () => {
                 return {
-                    url: `accounts:signUp?key=${process.env.FIREBASE_API_KEY}`,
+                    url: `accounts:signUp?key=${process.env.EXPO_PUBLIC_FIREBASE_API_KEY}`,
                     method: "POST",
                     body: {
                         returnSecureToken: true,
